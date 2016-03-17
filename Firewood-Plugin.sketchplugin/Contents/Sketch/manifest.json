@@ -1,0 +1,23 @@
+{
+  "author" : "",
+  "commands" : [
+    {
+      "script" : "script.cocoascript",
+      "handler" : "onRun",
+      "shortcut" : "ctrl alt f",
+      "name" : "Firewood-Plugin",
+      "identifier" : "firewood-plugin"
+    }
+  ],
+  "menu" : {
+    "items" : [
+      "firewood-plugin"
+    ],
+    "title" : "Firewood-Plugin"
+  },
+  "identifier" : "com.example.sketch.d801bed3-d3dd-4967-bbc1-682f21149951",
+  "version" : "1.0",
+  "description" : "",
+  "authorEmail" : "",
+  "name" : "Firewood-Plugin"
+}
