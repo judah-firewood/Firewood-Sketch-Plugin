@@ -1,29 +1,122 @@
-var options = ['None', 'Create Button', 'Two', 'Three', 'Four']
-var choice = createSelect('Choose an option', options, 1)
+@import 'common.js'
 
-// On Run
+/*
+ *	Create Button from Text
+ */
+function createButtonFromText(context){
+	var selection = context.selection;
+	var doc = context.document;
 
-var onRun = function(context) {
-  log("HELLO You chose: " + choice[1]);
-  if (choice[1] == 1){
-	createButtonFromText(context);
-  }
-  /*var selectedChoice = choice[1];
-  alert("You chose: " + options[selectedChoice], "Good choice!")*/
-};
+	for (var i=0; i < [selection count]; i++) {
+		var currentLayer = [selection objectAtIndex:i];
+			currentLayer.name = "TEXT";
 
+		var parentGroup = [currentLayer parentGroup];
+
+		var group = MSLayerGroup.new();
+		var groupFrame = group.frame();
+			groupFrame.setConstrainProportions(false);
+			group.setName('Button');
+
+		parentGroup.addLayers([group]);
+		parentGroup.removeLayer(currentLayer);
+		group.addLayers([currentLayer]);
+
+		var bgLayer = createButtonBg(currentLayer, group);
+			bgLayer.name = "BG";
+		
+		currentLayer.setIsSelected(false);
+
+		bgLayer.setIsSelected(true);
+		[[doc actionWithName:"MSMoveBackwardAction"] performAction:nil]
+		bgLayer.setIsSelected(false);
+	}
+}
+
+/* 
+ *	Update Button
+ */
+ function updateButton(context){
+ 	var selection = context.selection;
+
+ 	// loop though each layer in the selection
+	for (var i=0; i<[selection count]; i++) {
+		var layer = selection[i];
+		log(i + " selection: "+[layer name]);
+
+		var kids = [layer children];
+
+		for (var j=0; j<[kids count]; j++) {
+			var kid = kids[j];
+			log(j + " kids: "+[kid name]);
+		}
+	}
+ }
+
+// Create Button bg
+function createButtonBg(textField, parent){
+	var props = getTextFieldProps(textField);
+	var padX = 15;
+	var padY = 12;
+	var tgtX = props[0] - padX;
+	var tgtY = props[1] - padY + 1;
+	var tgtW = props[2] + (padX*2);
+	var tgtH = props[3] + (padY*2);;
+
+	// Create rectangle object
+	var rectShape = MSRectangleShape.alloc().init();
+		rectShape.frame = MSRect.rectWithRect(NSMakeRect(tgtX, tgtY, tgtW, tgtH));
+		rectShape.cornerRadiusFloat = 2;
+
+	// Wrap it with MSShapeGroup and set simple fill style.
+	var shapeGroup = MSShapeGroup.shapeWithPath(rectShape);
+
+	var fill = shapeGroup.style().fills().addNewStylePart();
+		fill.color = MSColor.colorWithSVGString("#fff");
+
+	// Add shadows
+	var shadow1 = shapeGroup.style().shadows().addNewStylePart();
+		shadow1.blurRadius = 2;
+		shadow1.color = hexToMSColor("#000000", 0.24);
+	var shadow2 = shapeGroup.style().shadows().addNewStylePart();
+		shadow2.offsetY = 0;
+		shadow2.blurRadius = 2;
+		shadow2.color = hexToMSColor("#000000", 0.12);
+
+	shapeGroup.frame().constrainProportions = false;
+
+	// Add created shape group to the current page.
+	parent.addLayers([shapeGroup]);
+
+	return shapeGroup;
+}
+
+// Get text field properties
+function getTextFieldProps(layer){
+	var frame = [layer frame];
+	var layerX = [frame x];
+	var layerY = [frame y];
+	var layerW = [frame width];
+	var layerH = [frame height];
+
+	log("getTextFieldProps: " + frame);
+
+	return [layerX, layerY, layerW, layerH];
+}
+
+
+/*
+ *	User Feedback
+ */
 
 // Create Alert
-
 function alert(msg, title) {
   title = title || "alert";
   var app = [NSApplication sharedApplication];
   [app displayDialog:msg withTitle:title];
 }
 
-
 // Create Alert with Select Box
-
 function createSelect(msg, items, selectedItemIndex){
 	selectedItemIndex = selectedItemIndex || 0
 
@@ -44,76 +137,14 @@ function createSelect(msg, items, selectedItemIndex){
 }
 
 
-// Create Button from Text
+/*var options = ['None', 'Create Button', 'Two', 'Three', 'Four']
+var choice = createSelect('Choose an option', options, 1)
 
-function createButtonFromText(context){
-  var selection = context.selection;
-  var doc = context.document;
+// On Run
 
-  for (var i=0; i < [selection count]; i++) {
-	var currentLayer = [selection objectAtIndex:i],
-		parentGroup = [currentLayer parentGroup];
-
-	var group = MSLayerGroup.new();
-	var groupFrame = group.frame();
-		groupFrame.setConstrainProportions(false);
-		group.setName('CTA');
-
-	parentGroup.addLayers([group]);
-	parentGroup.removeLayer(currentLayer);
-	group.addLayers([currentLayer]);
-
-	var bgLayer = createButtonBg(currentLayer, group);
-		bgLayer.name = "BG";
-	
-	currentLayer.setIsSelected(false);
-
-	bgLayer.setIsSelected(true);
-	[[doc actionWithName:"MSMoveBackwardAction"] performAction:nil]
-	bgLayer.setIsSelected(false);
+var onRun = function(context) {
+  log("HELLO You chose: " + choice[1]);
+  if (choice[1] == 1){
+	createButtonFromText(context);
   }
-}
-
-// Create Button bg
-
-function createButtonBg(textField, parent){
-
-	var props = getTextFieldProps(textField);
-
-	var padX = 15;
-	var padY = 12;
-
-	var tgtX = props[0] - padX;
-	var tgtY = props[1] - padY;
-	var tgtW = props[2] + (padX*2);
-	var tgtH = props[3] + (padY*2);;
-
-	// Create rectangle object
-	var rectShape = MSRectangleShape.alloc().init();
-		rectShape.frame = MSRect.rectWithRect(NSMakeRect(tgtX, tgtY, tgtW, tgtH));
-		rectShape.cornerRadiusFloat = 2;
-
-	// Wrap it with MSShapeGroup and set simple fill style.
-	var shapeGroup=MSShapeGroup.shapeWithPath(rectShape);
-	var fill = shapeGroup.style().fills().addNewStylePart();
-		fill.color = MSColor.colorWithSVGString("#fff");
-
-	shapeGroup.frame().constrainProportions = false; // Set to `true` if you want shape to be constrained.
-
-	// Add created shape group to the current page.
-	parent.addLayers([shapeGroup]);
-
-	return shapeGroup;
-}
-
-function getTextFieldProps(layer){
-	var frame = [layer frame];
-	var layerX = [frame x];
-	var layerY = [frame y];
-	var layerW = [frame width];
-	var layerH = [frame height];
-
-	log("getTextFieldProps: " + frame);
-
-	return [layerX, layerY, layerW, layerH];
-}
+};*/
