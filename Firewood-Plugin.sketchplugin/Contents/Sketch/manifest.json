@@ -13,19 +13,11 @@
       "shortcut" : "ctrl shift b",
       "script" : "script.cocoascript",
       "handler": "createButtonFromText"
-    },
-    {
-      "name": "Update Button",
-      "identifier": "update-button",
-      "shortcut" : "ctrl alt b",
-      "script" : "script.cocoascript",
-      "handler": "updateButton"
     }
   ],
   "menu" : {
     "items" : [
-      "create-button-from-text",
-      "update-button"
+      "create-button-from-text"
     ],
     "title" : "Firewood-Plugin"
   }

@@ -1,6 +1,6 @@
 
 
-var kPluginDomain = "com.holtslander.jay.sketch-make-long-shadow";
+var kPluginDomain = "com.firewoodmarketing.firewood-plugin";
 var kPluginName = ""
 
 //--------------------------------------
