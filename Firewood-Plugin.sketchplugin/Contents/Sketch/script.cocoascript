@@ -1,5 +1,8 @@
 @import 'common.js'
 
+var btnPadX = 15;
+var btnPadY = 12;
+
 /*
  *	Create Button from Text
  */
@@ -42,26 +45,46 @@ function createButtonFromText(context){
  	// loop though each layer in the selection
 	for (var i=0; i<[selection count]; i++) {
 		var layer = selection[i];
-		log(i + " selection: "+[layer name]);
-
 		var kids = [layer children];
+		var txt;
+		var bg;
 
 		for (var j=0; j<[kids count]; j++) {
 			var kid = kids[j];
-			log(j + " kids: "+[kid name]);
+			var type = [kid className];
+			var name = [kid name];
+			log(j + " kids: "+ type + " " + name);
+
+			if (type == 'MSTextLayer'){
+				txt = kid;
+			}
+			if (name == 'BG'){
+				bg = [kid frame];
+				log('BG!!!: ' + bg);
+			}
 		}
+
+		// Update Rect Size
+		var props = getTextFieldProps(txt);
+		
+		var tgtX = props[0] - btnPadX;
+		var tgtY = props[1] - btnPadY + 1;
+		var tgtW = props[2] + (btnPadX*2);
+		var tgtH = props[3] + (btnPadY*2);;
+		bg.setWidth(tgtW);
+		bg.setHeight(tgtH);
+		bg.setX(tgtX);
+		bg.setY(tgtY);
 	}
  }
 
 // Create Button bg
 function createButtonBg(textField, parent){
 	var props = getTextFieldProps(textField);
-	var padX = 15;
-	var padY = 12;
-	var tgtX = props[0] - padX;
-	var tgtY = props[1] - padY + 1;
-	var tgtW = props[2] + (padX*2);
-	var tgtH = props[3] + (padY*2);;
+	var tgtX = props[0] - btnPadX;
+	var tgtY = props[1] - btnPadY + 1;
+	var tgtW = props[2] + (btnPadX*2);
+	var tgtH = props[3] + (btnPadY*2);;
 
 	// Create rectangle object
 	var rectShape = MSRectangleShape.alloc().init();
